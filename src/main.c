@@ -1,40 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// Structural folder layout definition
-typedef struct {
-char *args[64];// arguments i.e no words in the line inputted by user
-int count; // count of words
-} Command;// name of structure
-// user defined function
-// line the line of words inputted by user
-// cmd is structure variable
-void parse_command(char *line, Command *cmd) {
-cmd->count = 0;
-char *token = strtok(line, " \t");
-while (token != NULL && cmd->count < 63) {
-cmd->args[cmd->count] = token;
-cmd->count++;
-token = strtok(NULL, " \t");
-}
-cmd->args[cmd->count] = NULL;
-}
 int main(void) {
 char *line = NULL;
 size_t len = 0;
-Command cmd;
+ssize_t nread;
 while (1) {
 printf("shellforge$ ");
-fflush(stdout);
-if (getline(&line, &len, stdin) == -1) break;
-if (strlen(line) > 0 && line[strlen(line) - 1] == '\n') {
-line[strlen(line) - 1] = '\0';
+fflush(stdout); // Force prompt to print immediately without buffer delays
+nread = getline(&line, &len, stdin);
+if (nread == -1) { // Detects Ctrl-D (End of File)
+printf("\nExiting cleanly...\n");
+break;
 }
-parse_command(line, &cmd);
-if (cmd.count == 0) continue;
-if (strcmp(cmd.args[0], "exit") == 0) break;
-printf("Structure Log -> command : %s | Arguments found: %d\n", cmd.args[0], cmd.count - 1);
+// Strip the trailing newline character caused by pressing Enter
+if (nread > 0 && line[nread - 1] == '\n') {
+line[nread - 1] = '\0';
 }
-free(line);
+// Exit trap condition
+if (strcmp(line, "exit") == 0) {
+break;
+}
+if (strlen(line) > 0) {
+printf("You typed: %s\n", line);
+}
+}
+free(line); // Prevent memory leaks
 return 0;
 }
