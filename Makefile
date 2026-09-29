@@ -1,10 +1,8 @@
 CC = gcc
-
 CFLAGS = -Wall -Wextra -g -std=gnu99
 
 TARGET = shellforge
-
-SRC = src/main.c
+SRC    = src/main.c
 
 all: $(TARGET)
 
@@ -13,5 +11,3 @@ $(TARGET): $(SRC)
 
 clean:
 	rm -f $(TARGET) src/*.o
-
-.PHONY: all clean
